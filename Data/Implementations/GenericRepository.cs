@@ -1,9 +1,11 @@
 using System.Linq.Expressions;
 using Addie.Data.Interfaces;
+using Addie.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Addie.Data.Implementations
 {
-    public class GenericRepository<T> : IGenericRepository<T>
+    public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
         private readonly DataContext _context;
         public GenericRepository(DataContext context)
@@ -29,6 +31,10 @@ namespace Addie.Data.Implementations
         public async Task<T> GetByIdAsync(int id)
         {
             return await _context.Set<T>().FindAsync(id);
+        }
+        public async Task<T?> SingleAsync(Expression<Func<T, bool>> predicate = null) 
+        {
+            return await _context.Set<T>().SingleOrDefaultAsync(predicate);
         }
 
         public async Task<IReadOnlyList<T>> ListAllAsync()

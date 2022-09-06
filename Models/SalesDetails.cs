@@ -1,14 +1,15 @@
 namespace Addie.Models
 {
-    public class SaleDetails
+    public class SalesDetails : BaseEntity
     {
-        public int Id { get; set; }
         public int SaleId { get; set; }
+        public int ProductId { get; set; }
         public double Quantity { get; set; }
         public double UnitPrice { get; set; }
         public double Total { get; set; }
 
         // Navigation Properties
-        public Sale Sale { get; set; }
+        // Although InMemory Db doesn't supports Relation
+        public Sales Sales { get; set; }
     }
 }

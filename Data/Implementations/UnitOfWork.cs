@@ -1,9 +1,10 @@
 using System.Collections;
 using Addie.Data.Interfaces;
+using Addie.Models;
 
 namespace Addie.Data.Implementations
 {
-    public class UnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
         private readonly DataContext _context;
         private Hashtable _repositories;
@@ -27,7 +28,7 @@ namespace Addie.Data.Implementations
             _context.Dispose();
         }
 
-        public IGenericRepository<T> Repository<T>() 
+        public IGenericRepository<T> Repository<T>() where T : BaseEntity 
         {
             if (_repositories == null) _repositories = new Hashtable();
 
