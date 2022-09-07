@@ -14,18 +14,6 @@ namespace Addie.Data
     
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            // base.OnModelCreating(builder);
-
-            builder.Entity<User>().HasData
-            (
-                new User()
-                {
-                    Id = 1,
-                    Password = "admin123",
-                    Username = "admin"
-                }
-            );
-
             base.OnModelCreating(builder);
         }
     }

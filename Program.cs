@@ -1,11 +1,16 @@
+using System.Net;
 using System.Text;
 using Addie.Data;
 using Addie.Data.Implementations;
 using Addie.Data.Interfaces;
+using Addie.Helpers;
+using Addie.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,8 +71,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<DataContext>();
+
+    Seeder.AddData(services);
+}
+
+app.UseMiddleware<ExceptionMiddleware>();
+
 // Configure the HTTP request pipeline.
 app.UseCors("CorsPolicy");
+
+
 
 if (app.Environment.IsDevelopment())
 {
@@ -76,6 +93,17 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.Use(async (context, next) =>
+    {
+        await next();
+
+        if (context.Response.StatusCode == (int)HttpStatusCode.Unauthorized)
+        {
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsync(JsonSerializer.Serialize(new ApiResponse(401, "Unauthorize")));
+        }
+    });
 
 app.UseAuthentication();
 app.UseAuthorization();

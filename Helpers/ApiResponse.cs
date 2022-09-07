@@ -7,29 +7,16 @@ namespace Addie.Helpers
 {
     public class ApiResponse
     {
-        public ApiResponse()
-        {
-
-        }
-        public ApiResponse(int statusCode, string? message)
-        {
-            StatusCode = statusCode;
-            Message = message ?? GetDefaultMessageForStatusCode(statusCode);
-        }
-        public ApiResponse(int statusCode, object data, string? message)
-        {
-            StatusCode = statusCode;
-            Message = message ?? GetDefaultMessageForStatusCode(statusCode);
-            Data = data;
-            IsError = DetectError(statusCode);
-
-        }
         public int StatusCode { get; set; }
         public string? Message { get; set; }
-        public bool IsError { get; set; }
-        public object? Data { get; set; }
+         public bool IsError { get; set; } = false;
 
-
+        public ApiResponse(int statusCode, string? message = null)
+        {
+            StatusCode = statusCode;
+            Message = message ?? GetDefaultMessageForStatusCode(statusCode);
+            IsError = DetectError(statusCode);
+        }
 
         private string? GetDefaultMessageForStatusCode(int statusCode)
         {
@@ -54,5 +41,14 @@ namespace Addie.Helpers
         {
             return DetectError > 299 || 200 > DetectError;
         }
+    }
+    public class ApiResponse<T> : ApiResponse where T : class
+    {
+        public ApiResponse(int statusCode, T data, string? message = null) :base(statusCode, message)
+        {
+            Data = data;
+        }
+
+        public T? Data { get; set; }
     }
 }

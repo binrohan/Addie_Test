@@ -1,5 +1,6 @@
 using Addie.Data.Interfaces;
 using Addie.Dtos;
+using Addie.Helpers;
 using Addie.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,7 @@ namespace Addie.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(ApiResponse<Sales>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetSales()
         {
            var sales = await _unitOfWork.Repository<Sales>().ListAllAsync();
